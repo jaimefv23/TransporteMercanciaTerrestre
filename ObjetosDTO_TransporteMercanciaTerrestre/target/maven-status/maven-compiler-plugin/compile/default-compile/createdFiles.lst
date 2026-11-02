@@ -1,0 +1,14 @@
+DTOS\CotizacionDTO.class
+DTOS\EvaluacionTrasladoDTO.class
+DTOS\RutaDTO.class
+DTOS\ClienteDTO.class
+DTOS\UsuarioDTO.class
+DTOS\DecisionClienteDTO.class
+DTOS\DetalleCotizacionDTO.class
+DTOS\ServicioDTO.class
+DTOS\TipoUnidadDTO.class
+DTOS\OrdenTransporteDTO.class
+DTOS\MercanciaDTO.class
+DTOS\SolicitudTransporteDTO.class
+DTOS\PropuestaOperativaDTO.class
+DTOS\PuntoTrasladoDTO.class
