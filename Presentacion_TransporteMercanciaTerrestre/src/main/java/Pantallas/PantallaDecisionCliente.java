@@ -442,7 +442,7 @@ public class PantallaDecisionCliente extends JFrame {
         chkRechazarPropuesta.setSelected("RECHAZAR".equals(tipo));
     }
 
-    /** Pinta el desglose con la cotización que entrega el Coordinador. */
+   
     public void actualizarDesglose(CotizacionDTO cot) {
         this.cotizacion = cot;
         lblSubtotalVal.setText(df.format(cot.getSubtotal()));

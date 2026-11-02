@@ -439,7 +439,7 @@ public class PantallaRegistroSolicitudFechas extends JFrame {
         txtTelOrigen.setText(clienteDTO.getTelefono());
     }
 
-    /** Si el usuario regresa a esta pantalla, recupera lo que ya había capturado. */
+    // si el usuario regresa a esta pantalla, recupera lo que ya había capturado
     private void cargarDatosPrevios() {
         PuntoTrasladoDTO o = solicitud.getOrigen();
         if (o != null) {
@@ -454,6 +454,7 @@ public class PantallaRegistroSolicitudFechas extends JFrame {
             txtTelOrigen.setText(o.getTelContacto());
             txtHorarioOrigen.setText(o.getVentanaHoraria());
         }
+        
         PuntoTrasladoDTO d = solicitud.getDestino();
         if (d != null) {
             txtCalleDestino.setText(d.getCalle());
@@ -514,4 +515,5 @@ public class PantallaRegistroSolicitudFechas extends JFrame {
         control.guardarOrigenDestino(origen, destino, dateCarga.getDate(), dateEntrega.getDate(),
                 txtNotasGenerales.getText());
     }
+    
 }

@@ -295,7 +295,7 @@ public class PantallaMenuClientes extends JFrame {
         }
     }
 
-    /** La vista solo pinta la lista que le entrega el Coordinador. */
+    // la vista solo pinta la lista que le entrega el coordinador
     public void mostrarClientes(List<ClienteDTO> clientes) {
         modeloTabla.setRowCount(0);
         clientesActuales = clientes;

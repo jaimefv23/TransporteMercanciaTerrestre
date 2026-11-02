@@ -169,6 +169,7 @@ public class ControlMercanciaTerrestre {
         if (error == null && !validador.esFechaValida(fechaEntrega)) {
             error = "Seleccione la fecha de entrega.";
         }
+        
         LocalDate carga = null;
         LocalDate entrega = null;
         if (error == null) {
@@ -332,8 +333,7 @@ public class ControlMercanciaTerrestre {
         coordinador.mostrarEditarMercancia(solicitudActual.getMercancias().get(indice));
     }
 
-    public void guardarEdicionMercancia(MercanciaDTO mercancia, String peso, String dimensiones,
-            String empaque, String observaciones, String condiciones) {
+    public void guardarEdicionMercancia(MercanciaDTO mercancia, String peso, String dimensiones, String empaque, String observaciones, String condiciones) {
         if (!esDecimalPositivo(peso)) {
             coordinador.mostrarError("El peso individual debe ser un número mayor a cero.");
             return;
@@ -460,12 +460,12 @@ public class ControlMercanciaTerrestre {
     cot.setIdCotizacion("COT-001");
     cot.setFechaEmision(LocalDate.now());
 
-    // Servicio Adicional
+    // servicio Adicional
     cot.getDetalles().add(new DetalleCotizacionDTO("DET-01", "Renta de Remolque", "ADICIONAL", 1.0, 1500.0));
     cot.getDetalles().add(new DetalleCotizacionDTO("DET-02", "Mano de Obra", "ADICIONAL", 1.0, 900.0));
     cot.getDetalles().add(new DetalleCotizacionDTO("DET-03", "Equipo Especializado", "ADICIONAL", 1.0, 1200.0));
 
-    // Servicio Principal
+    // servicio Principal
     cot.getDetalles().add(new DetalleCotizacionDTO("DET-04", "Gasolina Para La Unidad (80L Diesel)", "PRINCIPAL", 1.0, 7600.0));
     cot.getDetalles().add(new DetalleCotizacionDTO("DET-05", "Tiempo de Trayecto (4.5 hrs)", "PRINCIPAL", 1.0, 5998.50));
     cot.getDetalles().add(new DetalleCotizacionDTO("DET-06", "Casetas de cobro + Aduana (3×400)", "PRINCIPAL", 1.0, 1200.0));
@@ -476,13 +476,13 @@ public class ControlMercanciaTerrestre {
     }
     cot.getDetalles().add(new DetalleCotizacionDTO("DET-07", "Carga de mercancía (" + (int)pesoTotal + " kg)", "PRINCIPAL", 1.0, 1875.0));
 
-    // Servicio Opcional
+    // servicio Opcional
     if (requiereSeguroCarga) {
         cot.getDetalles().add(new DetalleCotizacionDTO("DET-08", "Equipo de aseguramiento", "OPCIONAL", 1.0, 2000.0));
         cot.getDetalles().add(new DetalleCotizacionDTO("DET-09", "Seguro de reposición contra accidentes", "OPCIONAL", 1.0, 1000.0));
     }
 
-    // Calculo de Totales
+    // calculo de Totales
     double subtotal = 0;
     for (DetalleCotizacionDTO d : cot.getDetalles()) {
         subtotal += d.getImporte();
@@ -583,9 +583,6 @@ public class ControlMercanciaTerrestre {
         irAMenuClientes();
         coordinador.mostrarConfirmacion("El proceso finalizó. La orden quedó registrada.");
     }
-
-
-    
 
     private void limpiarFlujoSolicitud() {
         this.solicitudActual = null;
