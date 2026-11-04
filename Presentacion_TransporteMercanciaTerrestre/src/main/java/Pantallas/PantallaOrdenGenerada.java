@@ -228,9 +228,7 @@ public class PantallaOrdenGenerada extends JFrame {
         // Único botón de comunicación: Enviar Por Correo
         btnEnviarCorreo = createCustomButton("Enviar Por Correo", COLOR_AZUL_BOTON);
         btnEnviarCorreo.setBounds(30, 640, 200, 38);
-        btnEnviarCorreo.addActionListener(e -> {
-            
-        });
+        btnEnviarCorreo.addActionListener(this::btnEnviarCorreoActionPerformed);
         panelPrincipal.add(btnEnviarCorreo);
 
         // Botón Finalizar Proceso
@@ -290,7 +288,7 @@ public class PantallaOrdenGenerada extends JFrame {
         control.finalizarProceso();
     }
 
-    private void btnEnviarCorreoActionPerfomed(ActionEvent evt) {
+    private void btnEnviarCorreoActionPerformed(ActionEvent evt) {
         control.enviarOrdenPorCorreo();
     }
 }

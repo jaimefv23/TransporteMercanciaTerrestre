@@ -2,6 +2,7 @@ package Validaciones;
 
 import java.util.Date;
 import java.util.regex.Pattern;
+import java.time.LocalDate;
 
 /**
  *
@@ -14,6 +15,7 @@ public class ValidadorPresentacion {
     private static final Pattern CODIGO_POSTAL = Pattern.compile("^\\d{5}$");
     private static final Pattern RFC = Pattern.compile("^[A-ZÑ&]{3,4}\\d{6}[A-Z0-9]{3}$", Pattern.CASE_INSENSITIVE);
     private static final Pattern NOMBRE = Pattern.compile("^[\\p{L}][\\p{L} .'-]*$");
+    private static final Pattern DECIMAL_POSITIVO = Pattern.compile("^(\\d+(\\.\\d+)?|\\.\\d+)$");
 
     public boolean esTextoVacio(String texto) {
         return texto == null || texto.trim().isEmpty();
@@ -77,6 +79,14 @@ public class ValidadorPresentacion {
 
     public boolean esIndiceSeleccionado(int indice) {
         return indice >= 0;
+    }
+
+    public boolean esDecimalPositivo(String texto) {
+        return !esTextoVacio(texto) && DECIMAL_POSITIVO.matcher(texto.trim()).matches() && Double.parseDouble(texto.trim()) > 0;
+    }
+
+    public boolean esFechaNoPasada(LocalDate fecha) {
+        return fecha != null && !fecha.isBefore(LocalDate.now());
     }
 
     public String limpiarNumero(String texto) {

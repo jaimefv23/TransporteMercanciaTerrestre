@@ -17,7 +17,6 @@ import java.util.List;
  *
  * @author Jaime
  */
-
 public class ControlMercanciaTerrestre {
 
     private final CoordinadorAplicacion coordinador;
@@ -119,7 +118,7 @@ public class ControlMercanciaTerrestre {
     }
 
     private String validarDatosCliente(String nombre, String telefono, String correo, String rfc, boolean validarRfc) {
-        
+
         if (validador.esTextoVacio(nombre)) {
             return "El nombre es obligatorio.";
         }
@@ -149,9 +148,7 @@ public class ControlMercanciaTerrestre {
         return null;
     }
 
-
     // solicitud
-    
     public void iniciarSolicitud() {
         SolicitudTransporteDTO nueva = new SolicitudTransporteDTO();
         nueva.setFolio(almacen.generarFolioSolicitud());
@@ -182,7 +179,9 @@ public class ControlMercanciaTerrestre {
         if (error == null) {
             carga = aLocalDate(fechaCarga);
             entrega = aLocalDate(fechaEntrega);
-            if (entrega.isBefore(carga)) {
+            if (!validador.esFechaNoPasada(carga)) {
+                error = "La fecha de carga no puede ser anterior a hoy.";
+            } else if (entrega.isBefore(carga)) {
                 error = "La fecha de entrega no puede ser anterior a la fecha de carga.";
             }
         }
@@ -223,6 +222,10 @@ public class ControlMercanciaTerrestre {
         if (validador.esTextoVacio(p.getNomContacto())) {
             return etiqueta + ": el nombre de contacto es obligatorio.";
         }
+
+        if (!validador.esNombreValido(p.getNomContacto())) {
+            return etiqueta + ": el nombre de contacto solo puede contener letras y espacios.";
+        }
         if (validador.esTextoVacio(p.getTelContacto())) {
             return etiqueta + ": el teléfono de contacto es obligatorio.";
         }
@@ -239,9 +242,7 @@ public class ControlMercanciaTerrestre {
         return fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
     }
 
-
     // cancelacion
-    
     public void solicitarCancelacion() {
         coordinador.mostrarMotivoCancelacion(false);
     }
@@ -266,12 +267,11 @@ public class ControlMercanciaTerrestre {
             almacen.guardarSolicitud(solicitudActual);
         }
         irAMenuClientes();
-        coordinador.mostrarConfirmacion(esRechazo ? "La propuesta fue rechazada y el motivo quedó registrado.": "La solicitud fue cancelada.");
+        coordinador.mostrarConfirmacion(esRechazo ? "La propuesta fue rechazada y el motivo quedó registrado." : "La solicitud fue cancelada.");
     }
 
     // captura de mercancía
-
-    public MercanciaDTO agregarMercancia(String nombre, String cantidad, String empaque,String peso, String largo, String ancho, String alto, String condiciones, String observaciones) {
+    public MercanciaDTO agregarMercancia(String nombre, String cantidad, String empaque, String peso, String largo, String ancho, String alto, String condiciones, String observaciones) {
         String error = null;
         if (validador.esTextoVacio(nombre)) {
             error = "El concepto de la mercancía es obligatorio.";
@@ -292,7 +292,7 @@ public class ControlMercanciaTerrestre {
             coordinador.mostrarError(error);
             return null;
         }
-        
+
         MercanciaDTO m = new MercanciaDTO();
         m.setIdMercancia(almacen.generarIdMercancia());
         m.setNombre(nombre.trim());
@@ -309,7 +309,7 @@ public class ControlMercanciaTerrestre {
     }
 
     private boolean esDecimalPositivo(String texto) {
-        return validador.esNumeroDecimal(texto) && Double.parseDouble(texto.trim()) > 0;
+        return validador.esDecimalPositivo(texto);
     }
 
     public void regresarACaptura() {
@@ -325,7 +325,6 @@ public class ControlMercanciaTerrestre {
     }
 
     // evaluacion
-
     public void irAEvaluacion() {
         coordinador.mostrarEvaluacionSolicitud(solicitudActual);
     }
@@ -373,7 +372,6 @@ public class ControlMercanciaTerrestre {
     }
 
     // ruta, unidad y cotizacion
-
     public void irAEstimacionRuta() {
         coordinador.mostrarEstimacionRuta(solicitudActual, rutaSeleccionada);
     }
@@ -435,9 +433,7 @@ public class ControlMercanciaTerrestre {
         coordinador.actualizarCotizacion(cotizacionActual);
     }
 
-
     // decision
-
     public void registrarDecisionCliente(String tipo, String notas) {
         if (!validador.esSeleccionValida(tipo)) {
             coordinador.mostrarAdvertencia("Seleccione la decisión del cliente (aceptar, modificar o rechazar).");
@@ -477,14 +473,18 @@ public class ControlMercanciaTerrestre {
         almacen.registrarDecision(d);
     }
 
-
     // orden
- 
     public void irAAceptacionRegistrada() {
         coordinador.mostrarAceptacionRegistrada(solicitudActual, propuestaActual, cotizacionActual);
     }
 
     public void generarOrden() {
+
+        if (solicitudActual == null || cotizacionActual == null || propuestaActual == null || unidadSeleccionada == null) {
+            coordinador.mostrarAdvertencia("Faltan datos de la solicitud para generar la orden.");
+            return;
+        }
+
         OrdenTransporteDTO orden = new OrdenTransporteDTO();
         orden.setIdOrdenTransporte("OT-" + solicitudActual.getFolio().replace("SOL-", ""));
         orden.setFolio(almacen.generarFolioOrden());
@@ -495,19 +495,25 @@ public class ControlMercanciaTerrestre {
         almacen.registrarOrden(orden);
 
         solicitudActual.setEstado("GENERADA (Lista p/ Flota)");
-        
+
         almacen.guardarSolicitud(solicitudActual);
-        
+
         this.solicitudActual = almacen.buscarSolicitudPorFolio(solicitudActual.getFolio());
-        
+
         this.ordenActual = almacen.buscarOrdenPorFolio(orden.getFolio());
         coordinador.mostrarOrdenGenerada(solicitudActual, propuestaActual, cotizacionActual, ordenActual);
     }
 
     public void enviarOrdenPorCorreo() {
+
+        if (ordenActual == null) {
+            coordinador.mostrarAdvertencia("No hay una orden generada para enviar.");
+            return;
+        }
+        
         ClienteDTO cliente = solicitudActual != null ? solicitudActual.getCliente() : null;
         String correo = cliente != null ? cliente.getCorreo() : null;
-        if (validador.esTextoVacio(correo) || !validador.esCorreoValido(correo)) { 
+        if (validador.esTextoVacio(correo) || !validador.esCorreoValido(correo)) {
             coordinador.mostrarError("El cliente no tiene un correo válido registrado.");
             return;
         }
