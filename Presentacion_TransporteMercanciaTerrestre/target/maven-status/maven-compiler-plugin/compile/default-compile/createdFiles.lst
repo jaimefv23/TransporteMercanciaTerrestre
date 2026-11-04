@@ -18,6 +18,7 @@ Arranque\Iniciar.class
 Pantallas\PantallaAceptacionRegistrada.class
 Pantallas\PantallaEstimacionRuta$4.class
 Pantallas\PantallaRegistroSolicitudMercancia$9.class
+Simuladores\SimuladorPropuesta.class
 Pantallas\PantallaMenuClientes$1.class
 Pantallas\PantallaSeleccionUnidad$5.class
 Pantallas\PantallaSeleccionUnidad$8.class
@@ -28,6 +29,7 @@ Pantallas\PantallaRevisarCotizacion$4.class
 Control\ControlMercanciaTerrestre.class
 Pantallas\PantallaDecisionCliente$2.class
 Pantallas\PantallaMotivoCancelacion.class
+Simuladores\SimuladorEvaluacion.class
 Pantallas\PantallaEditarCliente$3.class
 Validaciones\ValidadorPresentacion.class
 Pantallas\PantallaSeleccionUnidad$6.class
@@ -44,6 +46,7 @@ Pantallas\PantallaEditarSolicitudMercancia$1.class
 Pantallas\PantallaInicioSesion.class
 Pantallas\PantallaRegistroSolicitudMercancia$11.class
 Pantallas\PantallaEvaluacionSolicitud$4.class
+Simuladores\SimuladorCotizacion.class
 Pantallas\PantallaCotizacion$2.class
 Pantallas\PantallaOrdenGenerada$4.class
 Pantallas\PantallaRegistrarCliente$4.class

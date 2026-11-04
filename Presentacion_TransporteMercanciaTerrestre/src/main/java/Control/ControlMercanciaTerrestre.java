@@ -4,6 +4,9 @@ import Almacen.AlmacenTemporal;
 import Coordinador.CoordinadorAplicacion;
 import Validaciones.ValidadorPresentacion;
 import DTOS.*;
+import Simuladores.SimuladorCotizacion;
+import Simuladores.SimuladorEvaluacion;
+import Simuladores.SimuladorPropuesta;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -20,6 +23,11 @@ public class ControlMercanciaTerrestre {
     private final CoordinadorAplicacion coordinador;
     private final AlmacenTemporal almacen = AlmacenTemporal.getInstancia();
     private final ValidadorPresentacion validador = new ValidadorPresentacion();
+
+    // simulaciones del negocio (mockeados en otro paquete)
+    private final SimuladorEvaluacion simuladorEvaluacion = new SimuladorEvaluacion();
+    private final SimuladorPropuesta simuladorPropuesta = new SimuladorPropuesta();
+    private final SimuladorCotizacion simuladorCotizacion = new SimuladorCotizacion();
 
     private UsuarioDTO usuarioActual;
     private ClienteDTO clienteSeleccionado;
@@ -169,7 +177,6 @@ public class ControlMercanciaTerrestre {
         if (error == null && !validador.esFechaValida(fechaEntrega)) {
             error = "Seleccione la fecha de entrega.";
         }
-        
         LocalDate carga = null;
         LocalDate entrega = null;
         if (error == null) {
@@ -333,7 +340,8 @@ public class ControlMercanciaTerrestre {
         coordinador.mostrarEditarMercancia(solicitudActual.getMercancias().get(indice));
     }
 
-    public void guardarEdicionMercancia(MercanciaDTO mercancia, String peso, String dimensiones, String empaque, String observaciones, String condiciones) {
+    public void guardarEdicionMercancia(MercanciaDTO mercancia, String peso, String dimensiones,
+            String empaque, String observaciones, String condiciones) {
         if (!esDecimalPositivo(peso)) {
             coordinador.mostrarError("El peso individual debe ser un número mayor a cero.");
             return;
@@ -362,7 +370,7 @@ public class ControlMercanciaTerrestre {
             coordinador.mostrarAdvertencia("La solicitud no tiene mercancías registradas.");
             return;
         }
-        this.evaluacionActual = crearEvaluacionSimulada(solicitudActual);
+        this.evaluacionActual = simuladorEvaluacion.simularEvaluacion(solicitudActual);
         coordinador.mostrarEstimacionRuta(solicitudActual, rutaSeleccionada);
     }
 
@@ -402,13 +410,13 @@ public class ControlMercanciaTerrestre {
         }
         this.unidadSeleccionada = tipo;
         this.requiereSeguroCarga = seguro;
-        recalcularPropuestaYCotizacion();
+        solicitarPropuestaYCotizacion();
         coordinador.mostrarCotizacion(solicitudActual, propuestaActual, cotizacionActual);
     }
 
-    private void recalcularPropuestaYCotizacion() {
-        this.propuestaActual = crearPropuestaSimulada(rutaSeleccionada, unidadSeleccionada, requiereSeguroCarga);
-        this.cotizacionActual = crearCotizacionSimulada(solicitudActual, propuestaActual);
+    private void solicitarPropuestaYCotizacion() {
+        this.propuestaActual = simuladorPropuesta.simularPropuesta(rutaSeleccionada, unidadSeleccionada, requiereSeguroCarga);
+        this.cotizacionActual = simuladorCotizacion.simularCotizacion(solicitudActual, propuestaActual);
     }
 
     public void irACotizacion() {
@@ -425,80 +433,9 @@ public class ControlMercanciaTerrestre {
 
     public void cambiarSeguroCarga(boolean seguro) {
         this.requiereSeguroCarga = seguro;
-        recalcularPropuestaYCotizacion();
+        solicitarPropuestaYCotizacion();
         coordinador.actualizarCotizacion(cotizacionActual);
     }
-
-    
-    // respuestas simuladas
-   
-    private EvaluacionTrasladoDTO crearEvaluacionSimulada(SolicitudTransporteDTO solicitud) {
-    EvaluacionTrasladoDTO eval = new EvaluacionTrasladoDTO();
-    eval.setIdEvaluacion("EV-" + (solicitud != null && solicitud.getFolio() != null ? solicitud.getFolio() : "001"));
-    eval.setFecha(LocalDate.now());
-    eval.setCapacidadMinima(1000.0);
-    eval.setCondicionEspecial("Control de temperatura / Frágil");
-    eval.setObservaciones("Evaluación preliminar favorable.");
-    eval.setEstado("VIABLE");
-    return eval;
-}
-
-    private PropuestaOperativaDTO crearPropuestaSimulada(String ruta, TipoUnidadDTO unidad, boolean seguro) {
-    PropuestaOperativaDTO prop = new PropuestaOperativaDTO();
-    prop.setIdPropuesta("PROP-" + (System.currentTimeMillis() % 1000));
-    prop.setFecha(LocalDate.now());
-    prop.setRutaSeleccionada(ruta != null ? ruta : "A");
-    prop.setTipoUnidadSugerida(unidad);
-    prop.setDistanciaEstimada(250.0);
-    prop.setTiempoEstimado("4.5 Hrs Estimado");
-    prop.setEstado("PROPUESTA");
-    return prop;
-}
-
-    private CotizacionDTO crearCotizacionSimulada(SolicitudTransporteDTO solicitud, PropuestaOperativaDTO propuesta) {
-    CotizacionDTO cot = new CotizacionDTO();
-    cot.setIdCotizacion("COT-001");
-    cot.setFechaEmision(LocalDate.now());
-
-    // servicio Adicional
-    cot.getDetalles().add(new DetalleCotizacionDTO("DET-01", "Renta de Remolque", "ADICIONAL", 1.0, 1500.0));
-    cot.getDetalles().add(new DetalleCotizacionDTO("DET-02", "Mano de Obra", "ADICIONAL", 1.0, 900.0));
-    cot.getDetalles().add(new DetalleCotizacionDTO("DET-03", "Equipo Especializado", "ADICIONAL", 1.0, 1200.0));
-
-    // servicio Principal
-    cot.getDetalles().add(new DetalleCotizacionDTO("DET-04", "Gasolina Para La Unidad (80L Diesel)", "PRINCIPAL", 1.0, 7600.0));
-    cot.getDetalles().add(new DetalleCotizacionDTO("DET-05", "Tiempo de Trayecto (4.5 hrs)", "PRINCIPAL", 1.0, 5998.50));
-    cot.getDetalles().add(new DetalleCotizacionDTO("DET-06", "Casetas de cobro + Aduana (3×400)", "PRINCIPAL", 1.0, 1200.0));
-    
-    double pesoTotal = 15.0;
-    if (solicitud != null && !solicitud.getMercancias().isEmpty()) {
-        pesoTotal = solicitud.getMercancias().stream().mapToDouble(m -> m.getPeso() * m.getCantidad()).sum();
-    }
-    cot.getDetalles().add(new DetalleCotizacionDTO("DET-07", "Carga de mercancía (" + (int)pesoTotal + " kg)", "PRINCIPAL", 1.0, 1875.0));
-
-    // servicio Opcional
-    if (requiereSeguroCarga) {
-        cot.getDetalles().add(new DetalleCotizacionDTO("DET-08", "Equipo de aseguramiento", "OPCIONAL", 1.0, 2000.0));
-        cot.getDetalles().add(new DetalleCotizacionDTO("DET-09", "Seguro de reposición contra accidentes", "OPCIONAL", 1.0, 1000.0));
-    }
-
-    // calculo de Totales
-    double subtotal = 0;
-    for (DetalleCotizacionDTO d : cot.getDetalles()) {
-        subtotal += d.getImporte();
-    }
-
-    double iva = subtotal * 0.16;
-    double total = subtotal + iva;
-
-    cot.setSubtotal(subtotal);
-    cot.setDescuento(0.0);
-    cot.setIva(iva);
-    cot.setTotal(total);
-    cot.setEstado("VIGENTE");
-
-    return cot;
-}
 
 
     // decision
@@ -598,4 +535,5 @@ public class ControlMercanciaTerrestre {
     public ValidadorPresentacion getValidador() {
         return validador;
     }
+
 }

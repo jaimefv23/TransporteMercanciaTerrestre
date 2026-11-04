@@ -527,7 +527,7 @@ public class PantallaRegistroSolicitudMercancia extends JFrame {
         }
     }
     
-    // muestra las mercancías ya capturadas (por ejemplo, al regresar a esta pantalla)
+    /** Muestra las mercancías ya capturadas (por ejemplo, al regresar a esta pantalla). */
     private void cargarMercanciasPrevias() {
         for (MercanciaDTO m : solicitud.getMercancias()) {
             agregarFilaYTotales(m);
@@ -554,7 +554,7 @@ public class PantallaRegistroSolicitudMercancia extends JFrame {
         lblVolumenTotalEstimado.setText(String.format(Locale.US, "Volumen Total Estimado: %.3f m^3", acumuladoVolumenM3));
     }
 
-    // quita que el usuario pueda escribir la unidad ("1.25 kg", "0.35 m") 
+    /** Quita la unidad que el usuario pudo escribir ("1.25 kg", "0.35 m"). */
     private String quitarUnidad(String texto, String unidad) {
         return texto.replaceAll("(?i)\\s*" + unidad + "\\s*$", "").trim();
     }
@@ -599,7 +599,5 @@ public class PantallaRegistroSolicitudMercancia extends JFrame {
     private void btnFinalizarActionPerformed(ActionEvent evt) {
         control.finalizarCapturaMercancia();
     }
-    
-    
 
 }
