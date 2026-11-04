@@ -11,6 +11,7 @@ import DTOS.UsuarioDTO;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -106,6 +107,10 @@ public class AlmacenTemporal {
     }
 
 
+    public String idOrdenDeSolicitud(String folioSolicitud) {
+        return "OT-" + (folioSolicitud == null ? "" : folioSolicitud.replace("SOL-", ""));
+    }
+    
     public UsuarioDTO buscarUsuarioPorNombre(String nombre) {
         for (UsuarioDTO u : usuarios) {
             if (u.getNombre().equalsIgnoreCase(nombre)) {
@@ -119,13 +124,19 @@ public class AlmacenTemporal {
         if (cliente.getIdCliente() == null || cliente.getIdCliente().isBlank()) {
             cliente.setIdCliente(generarIdCliente());
         }
+        for (int i = 0; i < clientes.size(); i++) {
+            if (Objects.equals(clientes.get(i).getIdCliente(), cliente.getIdCliente())) {
+                clientes.set(i, cliente);
+                return cliente;
+            }
+        }
         clientes.add(cliente);
         return cliente;
     }
 
     public ClienteDTO buscarClientePorId(String idCliente) {
         for (ClienteDTO c : clientes) {
-            if (c.getIdCliente().equals(idCliente)) {
+            if (Objects.equals(c.getIdCliente(), idCliente)) {
                 return c;
             }
         }
@@ -173,8 +184,16 @@ public class AlmacenTemporal {
 
     public boolean actualizarCliente(ClienteDTO cliente) {
         for (int i = 0; i < clientes.size(); i++) {
-            if (clientes.get(i).getIdCliente().equals(cliente.getIdCliente())) {
+            if (Objects.equals(clientes.get(i).getIdCliente(), cliente.getIdCliente())) {
                 clientes.set(i, cliente);
+                
+                for (SolicitudTransporteDTO s : solicitudes) {
+                    if (s.getCliente() != null
+                            && Objects.equals(s.getCliente().getIdCliente(), cliente.getIdCliente())) {
+                        s.setCliente(cliente);
+                    }
+                }
+                
                 return true;
             }
         }
@@ -189,13 +208,20 @@ public class AlmacenTemporal {
         if (solicitud.getFolio() == null || solicitud.getFolio().isBlank()) {
             solicitud.setFolio(generarFolioSolicitud());
         }
+        if (actualizarSolicitud(solicitud)) {
+            return solicitud;
+        }
         solicitudes.add(solicitud);
         return solicitud;
+    }
+    
+    public SolicitudTransporteDTO guardarSolicitud(SolicitudTransporteDTO solicitud) {
+        return registrarSolicitud(solicitud);
     }
 
     public SolicitudTransporteDTO buscarSolicitudPorFolio(String folio) {
         for (SolicitudTransporteDTO s : solicitudes) {
-            if (s.getFolio().equals(folio)) {
+            if (Objects.equals(s.getFolio(), folio)) {
                 return s;
             }
         }
@@ -231,13 +257,41 @@ public class AlmacenTemporal {
     }
 
     public OrdenTransporteDTO registrarOrden(OrdenTransporteDTO orden) {
+        
+        if (orden.getFolio() == null || orden.getFolio().isBlank()) {
+            orden.setFolio(generarFolioOrden());
+        }
+        
+        if (actualizarOrden(orden)) {
+            return orden;
+        }
         ordenes.add(orden);
         return orden;
+    }
+    
+    public boolean actualizarOrden(OrdenTransporteDTO orden) {
+        for (int i = 0; i < ordenes.size(); i++) {
+            if (Objects.equals(ordenes.get(i).getFolio(), orden.getFolio())) {
+                ordenes.set(i, orden);
+                return true;
+            }
+        }
+        return false;
     }
 
     public OrdenTransporteDTO buscarOrdenPorFolio(String folio) {
         for (OrdenTransporteDTO o : ordenes) {
-            if (o.getFolio().equals(folio)) {
+            if (Objects.equals(o.getFolio(), folio)) {
+                return o;
+            }
+        }
+        return null;
+    }
+    
+    public OrdenTransporteDTO buscarOrdenPorFolioSolicitud(String folioSolicitud) {
+        String idEsperado = idOrdenDeSolicitud(folioSolicitud);
+        for (OrdenTransporteDTO o : ordenes) {
+            if (Objects.equals(o.getIdOrdenTransporte(), idEsperado)) {
                 return o;
             }
         }

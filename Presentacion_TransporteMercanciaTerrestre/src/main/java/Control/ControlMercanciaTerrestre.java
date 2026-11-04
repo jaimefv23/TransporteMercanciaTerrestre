@@ -263,12 +263,10 @@ public class ControlMercanciaTerrestre {
             solicitudActual.setEstado("RECHAZADA");
             solicitudActual.setMotivoEstado(motivo.trim());
             registrarDecision("RECHAZAR", motivo.trim());
-            almacen.registrarSolicitud(solicitudActual);
+            almacen.guardarSolicitud(solicitudActual);
         }
         irAMenuClientes();
-        coordinador.mostrarConfirmacion(esRechazo
-                ? "La propuesta fue rechazada y el motivo quedó registrado."
-                : "La solicitud fue cancelada.");
+        coordinador.mostrarConfirmacion(esRechazo ? "La propuesta fue rechazada y el motivo quedó registrado.": "La solicitud fue cancelada.");
     }
 
     // captura de mercancía
@@ -497,13 +495,13 @@ public class ControlMercanciaTerrestre {
         almacen.registrarOrden(orden);
 
         solicitudActual.setEstado("GENERADA (Lista p/ Flota)");
-        if (almacen.buscarSolicitudPorFolio(solicitudActual.getFolio()) == null) {
-            almacen.registrarSolicitud(solicitudActual);
-        } else {
-            almacen.actualizarSolicitud(solicitudActual);
-        }
-        this.ordenActual = orden;
-        coordinador.mostrarOrdenGenerada(solicitudActual, propuestaActual, cotizacionActual, orden);
+        
+        almacen.guardarSolicitud(solicitudActual);
+        
+        this.solicitudActual = almacen.buscarSolicitudPorFolio(solicitudActual.getFolio());
+        
+        this.ordenActual = almacen.buscarOrdenPorFolio(orden.getFolio());
+        coordinador.mostrarOrdenGenerada(solicitudActual, propuestaActual, cotizacionActual, ordenActual);
     }
 
     public void enviarOrdenPorCorreo() {
