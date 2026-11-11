@@ -17,6 +17,10 @@ public class ValidadorCredenciales {
     public ValidadorCredenciales() {
     }
 
+    public ValidadorCredenciales(AlmacenTemporal almacen) {
+        this.almacen = almacen;
+    }
+
     public UsuarioDTO verificarCredenciales(String nombre, String contrasenia) {
         if (nombre == null || nombre.isBlank() || contrasenia == null || contrasenia.isEmpty()) {
             return null;
@@ -31,7 +35,7 @@ public class ValidadorCredenciales {
             return null;
         }
 
-        return new UsuarioDTO(usuario.getIdUsuario(), usuario.getNombre(), usuario.getNombre(), usuario.isEstado());
+        return new UsuarioDTO(usuario.getIdUsuario(), usuario.getNombre(), usuario.getNombre());
     }
 
     public boolean usuarioActivo(UsuarioDTO usuario) {

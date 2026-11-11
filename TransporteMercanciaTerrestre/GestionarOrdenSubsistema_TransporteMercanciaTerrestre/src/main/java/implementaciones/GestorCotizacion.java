@@ -20,6 +20,9 @@ import java.util.List;
 public class GestorCotizacion {
     private AlmacenTemporal almacen;
     
+    public GestorCotizacion() {
+    }
+
     public GestorCotizacion(AlmacenTemporal almacen){
         this.almacen = almacen;
     }

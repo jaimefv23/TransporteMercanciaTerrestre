@@ -17,6 +17,13 @@ import java.time.LocalDate;
 public class GestorOrden {
     AlmacenTemporal almacen; //Mientras implementamos los BO
     
+    public GestorOrden() {
+    }
+    
+    public GestorOrden(AlmacenTemporal almacen) {
+        this.almacen = almacen;
+    }
+    
     public DecisionClienteDTO registrarDecision(String folio, DecisionClienteDTO decision){
          if (decision == null || decision.getIdDecision() == null
                 || decision.getIdDecision().isBlank()) {

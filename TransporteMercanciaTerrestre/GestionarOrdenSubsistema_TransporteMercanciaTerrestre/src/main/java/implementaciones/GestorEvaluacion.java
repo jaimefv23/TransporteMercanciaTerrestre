@@ -15,6 +15,13 @@ import DTOS.SolicitudTransporteDTO;
 public class GestorEvaluacion {
     AlmacenTemporal almacen;
     
+    public GestorEvaluacion() {
+    }
+    
+    public GestorEvaluacion(AlmacenTemporal almacen) {
+        this.almacen = almacen;
+    }
+    
     public EvaluacionTrasladoDTO evaluarViabilidad(String folio, EvaluacionTrasladoDTO evaluacion){
         SolicitudTransporteDTO solicitud = almacen.buscarSolicitudPorFolio(folio);
         evaluacion = new EvaluacionTrasladoDTO();

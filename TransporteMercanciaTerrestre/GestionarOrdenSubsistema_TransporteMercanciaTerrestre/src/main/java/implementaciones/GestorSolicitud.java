@@ -16,6 +16,13 @@ import DTOS.SolicitudTransporteDTO;
 public class GestorSolicitud {
     AlmacenTemporal almacen; //Mientras implementamos los BO
     
+    public GestorSolicitud() {
+    }
+    
+    public GestorSolicitud(AlmacenTemporal almacen) {
+        this.almacen = almacen;
+    }
+    
     public SolicitudTransporteDTO crearSolicitud(String idCliente){
         SolicitudTransporteDTO nueva = new SolicitudTransporteDTO();
         nueva.setFolio(almacen.generarFolioSolicitud());

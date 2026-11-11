@@ -19,6 +19,12 @@ import java.util.List;
 public class GestorPropuestaOperativa {
     AlmacenTemporal almacen;
     
+    public GestorPropuestaOperativa() {
+    }
+    
+    public GestorPropuestaOperativa(AlmacenTemporal almacen) {
+        this.almacen = almacen;
+    }
 //    public List<RutaDTO> crearRutas(String folio){
 //    }
 //    

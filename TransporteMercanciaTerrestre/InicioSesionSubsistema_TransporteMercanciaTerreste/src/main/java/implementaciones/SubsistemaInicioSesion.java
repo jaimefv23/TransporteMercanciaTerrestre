@@ -4,6 +4,7 @@
  */
 package implementaciones;
 
+import Almacen.AlmacenTemporal;
 import DTOS.UsuarioDTO;
 import interfaces.ISubsistemaInicioSesion;
 
@@ -14,11 +15,17 @@ import interfaces.ISubsistemaInicioSesion;
 public class SubsistemaInicioSesion implements ISubsistemaInicioSesion {
     private ValidadorCredenciales validador;
     private GestorSesion gestorSesion;
-    
+
+    public SubsistemaInicioSesion(AlmacenTemporal almacen) {
+        this.validador = new ValidadorCredenciales(almacen);
+        this.gestorSesion = new GestorSesion(almacen);
+    }
+
     @Override
     public UsuarioDTO autenticarUsuario(String nombre, String contrasena) {
         UsuarioDTO usuario = validador.verificarCredenciales(nombre, contrasena);
-        if(validador.usuarioActivo(usuario)){
+        if (usuario != null && validador.usuarioActivo(usuario)) {
+            gestorSesion.abrirSesion(usuario);
             return usuario;
         }
         return null;
@@ -33,5 +40,4 @@ public class SubsistemaInicioSesion implements ISubsistemaInicioSesion {
     public boolean validarSesionActiva(String idUsuario) {
         return gestorSesion.existeSesion(idUsuario);
     }
-    
 }

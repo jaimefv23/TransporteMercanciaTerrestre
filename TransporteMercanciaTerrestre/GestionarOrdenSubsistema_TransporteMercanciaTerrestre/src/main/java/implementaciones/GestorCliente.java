@@ -14,6 +14,13 @@ import DTOS.ClienteDTO;
 public class GestorCliente {
     AlmacenTemporal almacen; //Mientras implementamos los BO
     
+    public GestorCliente() {
+    }
+    
+    public GestorCliente(AlmacenTemporal almacen) {
+        this.almacen = almacen;
+    }
+
     public ClienteDTO buscarPorCorreo(String correo){
         ClienteDTO cliente = almacen.buscarClientePorCorreo(correo);
         if(validarEstado(cliente.getIdCliente())){

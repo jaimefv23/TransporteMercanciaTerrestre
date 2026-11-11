@@ -26,8 +26,8 @@ import java.util.List;
 public interface ISubsistemaGestionarOrden {
     
     public ClienteDTO buscarCliente(String correo);
-    public boolean validarEstadoCliente(int idCliente);
-    public SolicitudTransporteDTO iniciarSolicitud(int idCliente);
+    public boolean validarEstadoCliente(String idCliente);
+    public SolicitudTransporteDTO iniciarSolicitud(String idCliente);
     public SolicitudTransporteDTO registrarOrigenDestino(String folio, PuntoTrasladoDTO origen, PuntoTrasladoDTO destino);
     public SolicitudTransporteDTO agregarMercancia(String folio, MercanciaDTO mercancia);
     public SolicitudTransporteDTO enviarAEvaluacion(String folio);
