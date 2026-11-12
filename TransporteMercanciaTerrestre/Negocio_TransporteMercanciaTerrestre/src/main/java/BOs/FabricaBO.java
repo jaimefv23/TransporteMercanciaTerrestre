@@ -68,4 +68,7 @@ public class FabricaBO {
         return new DecisionClienteBO();
     }
 
+    public static IOrdenTransporteBO crearOrdenTransporteBO() {
+        return new OrdenTransporteBO();
+    }
 }

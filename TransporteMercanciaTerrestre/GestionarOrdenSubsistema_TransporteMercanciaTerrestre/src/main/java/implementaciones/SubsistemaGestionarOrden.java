@@ -115,6 +115,9 @@ public class SubsistemaGestionarOrden implements ISubsistemaGestionarOrden {
 
     @Override
     public OrdenTransporteDTO generarOrden(SolicitudTransporteDTO solicitud, PropuestaOperativaDTO propuesta, CotizacionDTO cotizacion) {
-        return ordenG.generarOrden(solicitud, propuesta, cotizacion);
+        OrdenTransporteDTO orden = ordenG.generarOrden(solicitud, propuesta, cotizacion);
+        solicitud.setEstado("GENERADA (Lista p/ Flota)");
+        solicitudG.guardarSolicitud(solicitud);
+        return orden;
     }
 }

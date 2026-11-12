@@ -18,11 +18,22 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-    <groupId>com.toedter</groupId>
-    <artifactId>jcalendar</artifactId>
-    <version>1.4</version>
+            <groupId>com.toedter</groupId>
+            <artifactId>jcalendar</artifactId>
+            <version>1.4</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>GestionarOrdenSubsistema_TransporteMercanciaTerrestre</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>InicioSesionSubsistema_TransporteMercanciaTerreste</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
+    
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>25</maven.compiler.release>
