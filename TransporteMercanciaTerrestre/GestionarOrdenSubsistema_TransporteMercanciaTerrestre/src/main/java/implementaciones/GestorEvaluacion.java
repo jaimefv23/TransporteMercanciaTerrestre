@@ -5,34 +5,24 @@
 package implementaciones;
 
 import Almacen.AlmacenTemporal;
+import BOs.IEvaluacionTrasladoBO;
 import DTOS.EvaluacionTrasladoDTO;
 import DTOS.SolicitudTransporteDTO;
+import BOs.FabricaBO;
 
 /**
  *
  * @author tolan
  */
 public class GestorEvaluacion {
-    AlmacenTemporal almacen;
     
-    public GestorEvaluacion() {
-    }
-    
-    public GestorEvaluacion(AlmacenTemporal almacen) {
-        this.almacen = almacen;
-    }
-    
-    public EvaluacionTrasladoDTO evaluarViabilidad(String folio, EvaluacionTrasladoDTO evaluacion){
-        SolicitudTransporteDTO solicitud = almacen.buscarSolicitudPorFolio(folio);
-        evaluacion = new EvaluacionTrasladoDTO();
+    private IEvaluacionTrasladoBO evaluacionBO;
 
-        return evaluacion;
+    public GestorEvaluacion() {
+        this.evaluacionBO = FabricaBO.crearEvaluacionTrasladoBO();
     }
-    
-    public boolean esViable(EvaluacionTrasladoDTO evaluacion){
-        if(evaluacion.getEstado()=="APROBADA"){
-            return true;
-        }
-        return false;
+
+    public EvaluacionTrasladoDTO evaluarSolicitud(SolicitudTransporteDTO solicitud) {
+        return evaluacionBO.evaluar(solicitud);
     }
 }

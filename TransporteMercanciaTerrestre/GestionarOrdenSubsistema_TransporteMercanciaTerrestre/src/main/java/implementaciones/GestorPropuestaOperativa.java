@@ -5,10 +5,13 @@
 package implementaciones;
 
 import Almacen.AlmacenTemporal;
+import BOs.IPropuestaOperativaBO;
+import BOs.ITipoUnidadBO;
 import DTOS.PropuestaOperativaDTO;
 import DTOS.RutaDTO;
 import DTOS.SolicitudTransporteDTO;
 import DTOS.TipoUnidadDTO;
+import BOs.FabricaBO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,36 +20,24 @@ import java.util.List;
  * @author tolan
  */
 public class GestorPropuestaOperativa {
-    AlmacenTemporal almacen;
     
+    private ITipoUnidadBO tipoUnidadBO;
+    private IPropuestaOperativaBO propuestaBO;
+
     public GestorPropuestaOperativa() {
+        this.tipoUnidadBO = FabricaBO.crearTipoUnidadBO();
+        this.propuestaBO = FabricaBO.crearPropuestaOperativaBO();
     }
-    
-    public GestorPropuestaOperativa(AlmacenTemporal almacen) {
-        this.almacen = almacen;
+
+    public List<TipoUnidadDTO> consultarTiposUnidad() {
+        return tipoUnidadBO.consultarTodos();
     }
-//    public List<RutaDTO> crearRutas(String folio){
-//    }
-//    
-//    public PropuestaOperativaDTO seleccionarRuta(String folio, RutaDTO ruta){
-//    }
-    //No estoy seguro de cómo manejar rutas
-    
-    public List<TipoUnidadDTO> buscarUnidadesDisponibles(double volumenRequerido, String condicionEspecial){
-        List<TipoUnidadDTO> todas = almacen.obtenerTiposUnidad();
-        List<TipoUnidadDTO> apropiadas = new ArrayList<>();
-        
-        for(int i = 0;i<todas.size();i++){
-            if(volumenRequerido <= todas.get(i).getCapacidadVolumen() && condicionEspecial.equals(todas.get(i).getCondicionEspecial())){
-                apropiadas.add(todas.get(i));
-            }
-        }
-        
-        return apropiadas;
+
+    public TipoUnidadDTO consultarTipoUnidadPorNombre(String nombre) {
+        return tipoUnidadBO.consultarPorNombre(nombre);
     }
-    public PropuestaOperativaDTO seleccionarUnidad(String folio, TipoUnidadDTO tipoUnidad){
-        PropuestaOperativaDTO propuesta = new PropuestaOperativaDTO();
-        propuesta.setTipoUnidadSugerida(tipoUnidad);
-        return propuesta;
+
+    public PropuestaOperativaDTO generarPropuesta(String ruta, TipoUnidadDTO tipoUnidad, boolean requiereSeguroCarga) {
+        return propuestaBO.generar(ruta, tipoUnidad, requiereSeguroCarga);
     }
 }

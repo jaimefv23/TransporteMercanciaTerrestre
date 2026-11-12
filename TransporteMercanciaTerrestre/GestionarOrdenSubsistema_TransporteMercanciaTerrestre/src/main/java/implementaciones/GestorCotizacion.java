@@ -4,45 +4,25 @@
  */
 package implementaciones;
 
-import Almacen.AlmacenTemporal;
+import BOs.ICotizacionBO;
 import DTOS.CotizacionDTO;
-import DTOS.DetalleCotizacionDTO;
-import DTOS.RutaDTO;
-import DTOS.ServicioDTO;
-import DTOS.TipoUnidadDTO;
-import java.util.ArrayList;
-import java.util.List;
+import DTOS.PropuestaOperativaDTO;
+import DTOS.SolicitudTransporteDTO;
+import BOs.FabricaBO;
 
 /**
  *
  * @author tolan
  */
 public class GestorCotizacion {
-    private AlmacenTemporal almacen;
     
+     private ICotizacionBO cotizacionBO;
+
     public GestorCotizacion() {
+        this.cotizacionBO = FabricaBO.crearCotizacionBO();
     }
 
-    public GestorCotizacion(AlmacenTemporal almacen){
-        this.almacen = almacen;
+    public CotizacionDTO generarCotizacion(SolicitudTransporteDTO solicitud, PropuestaOperativaDTO propuesta) {
+        return cotizacionBO.generar(solicitud, propuesta);
     }
-    
-//    public List<ServicioDTO> obtenerServicios(TipoUnidadDTO tipoUnidad, RutaDTO ruta){
-//        //List<ServicioDTO> disponibles = 
-//        List<ServicioDTO> resultado = new ArrayList<>();
-//        for (ServicioDTO s : disponibles) {
-//            if (servicios == null || !servicios.contains(s)) {
-//                resultado.add(s);
-//            }
-//        }
-//        return resultado;
-//    } 
-    //Aún sin tratamiento de servicios
-//    public DetalleCotizacionDTO generarDetalle(ServicioDTO servicio, String caracterServicio, boolean esIndispensable){
-//        
-//    }
-//    public CotizacionDTO crearCotizacion(String folio, List<DetalleCotizacionDTO> detalles){
-//        
-//    }
-    //Esperamos a servicios
 }

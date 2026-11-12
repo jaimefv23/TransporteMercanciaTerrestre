@@ -14,16 +14,11 @@ import java.util.Map;
  * @author tolan
  */
 public class GestorSesion {
+    
     private final Map<String, UsuarioDTO> sesionesActivas;
-    private final AlmacenTemporal almacen;
 
-    public GestorSesion(AlmacenTemporal almacen) {
-        this(new HashMap<>(), almacen);
-    }
-
-    public GestorSesion(Map<String, UsuarioDTO> sesionesActivas, AlmacenTemporal almacen) {
-        this.sesionesActivas = (sesionesActivas != null) ? sesionesActivas : new HashMap<>();
-        this.almacen = almacen;
+    public GestorSesion() {
+        this.sesionesActivas = new HashMap<>();
     }
 
     public void abrirSesion(UsuarioDTO usuario) {

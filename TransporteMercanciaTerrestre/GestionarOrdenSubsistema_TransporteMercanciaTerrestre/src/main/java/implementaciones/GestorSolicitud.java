@@ -5,49 +5,52 @@
 package implementaciones;
 
 import Almacen.AlmacenTemporal;
+import BOs.IMercanciaBO;
+import BOs.ISolicitudTransporteBO;
+import DTOS.ClienteDTO;
 import DTOS.MercanciaDTO;
 import DTOS.PuntoTrasladoDTO;
 import DTOS.SolicitudTransporteDTO;
+import BOs.FabricaBO;
+import java.util.List;
 
 /**
  *
  * @author tolan
  */
 public class GestorSolicitud {
-    AlmacenTemporal almacen; //Mientras implementamos los BO
     
+    private ISolicitudTransporteBO solicitudBO;
+    private IMercanciaBO mercanciaBO;
+
     public GestorSolicitud() {
+        this.solicitudBO = FabricaBO.crearSolicitudTransporteBO();
+        this.mercanciaBO = FabricaBO.crearMercanciaBO();
     }
-    
-    public GestorSolicitud(AlmacenTemporal almacen) {
-        this.almacen = almacen;
-    }
-    
-    public SolicitudTransporteDTO crearSolicitud(String idCliente){
-        SolicitudTransporteDTO nueva = new SolicitudTransporteDTO();
-        nueva.setFolio(almacen.generarFolioSolicitud());
-        nueva.setCliente(almacen.buscarClientePorId(idCliente));
-        
-        return nueva;
-    }
-    
-    public SolicitudTransporteDTO asignarOrigenDestino(String folio, PuntoTrasladoDTO origen, PuntoTrasladoDTO destino){
-        SolicitudTransporteDTO solicitud = almacen.buscarSolicitudPorFolio(folio);
-        solicitud.setOrigen(origen);
-        solicitud.setDestino(destino);
-        return solicitud;
-    }
-    
-    public SolicitudTransporteDTO agregarMercancia(String folio, MercanciaDTO mercancia){
-        SolicitudTransporteDTO solicitud = almacen.buscarSolicitudPorFolio(folio);
-        
-        return solicitud;
-    }
-    public SolicitudTransporteDTO marcarEnEvaluacion(String folio){
-        SolicitudTransporteDTO solicitud = almacen.buscarSolicitudPorFolio(folio);
+
+    public SolicitudTransporteDTO iniciarSolicitud(ClienteDTO cliente) {
+        if (cliente == null) {
+            throw new IllegalArgumentException("Debe seleccionarse un cliente");
+        }
+        SolicitudTransporteDTO solicitud = new SolicitudTransporteDTO();
+        solicitud.setFolio(solicitudBO.generarFolio());
+        solicitud.setCliente(cliente);
         solicitud.setEstado("EN_EVALUACION");
-        
         return solicitud;
+    }
+
+    public List<SolicitudTransporteDTO> consultarSolicitudesPorCliente(String idCliente) {
+        return solicitudBO.consultarPorCliente(idCliente);
+    }
+
+    public MercanciaDTO agregarMercancia(SolicitudTransporteDTO solicitud, MercanciaDTO mercancia) {
+        MercanciaDTO agregada = mercanciaBO.agregar(mercancia);
+        solicitud.getMercancias().add(agregada);
+        return agregada;
+    }
+
+    public SolicitudTransporteDTO guardarSolicitud(SolicitudTransporteDTO solicitud) {
+        return solicitudBO.guardar(solicitud);
     }
     
 }

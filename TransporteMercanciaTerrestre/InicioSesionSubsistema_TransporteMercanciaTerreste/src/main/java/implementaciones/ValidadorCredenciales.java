@@ -5,20 +5,20 @@
 package implementaciones;
 
 import Almacen.AlmacenTemporal;
+import BOs.IUsuarioBO;
 import DTOS.UsuarioDTO;
+import BOs.FabricaBO;
 
 /**
  *
  * @author tolan
  */
 public class ValidadorCredenciales {
-    private AlmacenTemporal almacen; //También mientras implementamos los BO y la capa de datos
     
-    public ValidadorCredenciales() {
-    }
+    private IUsuarioBO usuarioBO;
 
-    public ValidadorCredenciales(AlmacenTemporal almacen) {
-        this.almacen = almacen;
+    public ValidadorCredenciales() {
+        this.usuarioBO = FabricaBO.crearUsuarioBO();
     }
 
     public UsuarioDTO verificarCredenciales(String nombre, String contrasenia) {
@@ -26,19 +26,19 @@ public class ValidadorCredenciales {
             return null;
         }
 
-        UsuarioDTO usuario = almacen.buscarUsuarioPorNombre(nombre.trim().toLowerCase());
+        UsuarioDTO usuario = usuarioBO.consultarPorNombre(nombre);
         if (usuario == null) {
             return null;
         }
-
         if (!usuario.getContrasenia().equals(contrasenia)) {
             return null;
         }
 
-        return new UsuarioDTO(usuario.getIdUsuario(), usuario.getNombre(), usuario.getNombre());
+        // se regresa una copia sin la contraseña
+        return new UsuarioDTO(usuario.getIdUsuario(), usuario.getNombre(), null);
     }
 
     public boolean usuarioActivo(UsuarioDTO usuario) {
-        return usuario != null && usuario.isEstado();
+        return usuario != null;
     }
 }

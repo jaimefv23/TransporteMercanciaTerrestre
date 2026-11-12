@@ -5,9 +5,13 @@
 package implementaciones;
 
 import Almacen.AlmacenTemporal;
+import BOs.IDecisionClienteBO;
+import DTOS.CotizacionDTO;
 import DTOS.DecisionClienteDTO;
 import DTOS.OrdenTransporteDTO;
+import DTOS.PropuestaOperativaDTO;
 import DTOS.SolicitudTransporteDTO;
+import BOs.FabricaBO;
 import java.time.LocalDate;
 
 /**
@@ -15,35 +19,38 @@ import java.time.LocalDate;
  * @author tolan
  */
 public class GestorOrden {
-    AlmacenTemporal almacen; //Mientras implementamos los BO
     
+    private IDecisionClienteBO decisionBO;
+
     public GestorOrden() {
+        this.decisionBO = FabricaBO.crearDecisionClienteBO();
     }
-    
-    public GestorOrden(AlmacenTemporal almacen) {
-        this.almacen = almacen;
+
+    public DecisionClienteDTO registrarDecision(String tipoDecision, String observaciones) {
+        DecisionClienteDTO decision = new DecisionClienteDTO();
+        decision.setTipoDecision(tipoDecision);
+        decision.setObservaciones(observaciones);
+        return decisionBO.guardar(decision);
     }
-    
-    public DecisionClienteDTO registrarDecision(String folio, DecisionClienteDTO decision){
-         if (decision == null || decision.getIdDecision() == null
-                || decision.getIdDecision().isBlank()) {
-            throw new IllegalArgumentException("La decisión debe tener idDecision");
+
+    public OrdenTransporteDTO generarOrden(SolicitudTransporteDTO solicitud, PropuestaOperativaDTO propuesta, CotizacionDTO cotizacion) {
+        if (solicitud == null || propuesta == null || cotizacion == null) {
+            throw new IllegalArgumentException("Faltan datos para generar la orden");
         }
-        if (decision.getFechaDecision() == null) {
-            decision.setFechaDecision(java.time.LocalDate.now());
+
+        String numero = solicitud.getFolio().replace("SOL-", "");
+        String condiciones = "Ruta " + propuesta.getRutaSeleccionada() + " | " + propuesta.getTipoUnidadSugerida().getNombre();
+        if (propuesta.isRequiereSeguroCarga()) {
+            condiciones = condiciones + " | Con seguro de carga";
         }
-        if (decision.getTipoDecision() == null || decision.getTipoDecision().isBlank()) {
-            throw new IllegalArgumentException("La decisión debe tener tipoDecision");
-        }
-        return almacen.registrarDecision(decision);
-    }
-    public OrdenTransporteDTO generarOrdenTransporte(String folio){
+
         OrdenTransporteDTO orden = new OrdenTransporteDTO();
-        orden.setCondicionesAcordadas("");
-        orden.setEstado("EMITIDO");
-        orden.setFolio(almacen.generarFolioOrden());
-        orden.setFechaEmision(java.time.LocalDate.now());
-        //orden.setImporteAutorizado(cotizacion.getTotal()); Esperamos a poder tratarla
+        orden.setIdOrdenTransporte("OT-" + numero);
+        orden.setFolio("ORD-" + numero);
+        orden.setFechaEmision(LocalDate.now());
+        orden.setEstado("GENERADA (Lista p/ Flota)");
+        orden.setImporteAutorizado(cotizacion.getTotal());
+        orden.setCondicionesAcordadas(condiciones);
         return orden;
     }
 }

@@ -13,18 +13,19 @@ import interfaces.ISubsistemaInicioSesion;
  * @author tolan
  */
 public class SubsistemaInicioSesion implements ISubsistemaInicioSesion {
+    
     private ValidadorCredenciales validador;
     private GestorSesion gestorSesion;
 
-    public SubsistemaInicioSesion(AlmacenTemporal almacen) {
-        this.validador = new ValidadorCredenciales(almacen);
-        this.gestorSesion = new GestorSesion(almacen);
+    public SubsistemaInicioSesion() {
+        this.validador = new ValidadorCredenciales();
+        this.gestorSesion = new GestorSesion();
     }
 
     @Override
     public UsuarioDTO autenticarUsuario(String nombre, String contrasena) {
         UsuarioDTO usuario = validador.verificarCredenciales(nombre, contrasena);
-        if (usuario != null && validador.usuarioActivo(usuario)) {
+        if (validador.usuarioActivo(usuario)) {
             gestorSesion.abrirSesion(usuario);
             return usuario;
         }

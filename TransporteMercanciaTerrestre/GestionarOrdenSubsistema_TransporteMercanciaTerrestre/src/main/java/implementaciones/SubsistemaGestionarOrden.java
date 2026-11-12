@@ -26,105 +26,95 @@ import java.util.List;
  * @author tolan
  */
 public class SubsistemaGestionarOrden implements ISubsistemaGestionarOrden {
-    GestorCliente clientesG;
-    GestorSolicitud solicitudG;
-    GestorEvaluacion evaluacionG;
-    GestorPropuestaOperativa propuestaG;
-    GestorCotizacion cotizacionG;
-    GestorOrden ordenG;
-    AlmacenTemporal almacen;
+    
+    private GestorCliente clienteG;
+    private GestorSolicitud solicitudG;
+    private GestorEvaluacion evaluacionG;
+    private GestorPropuestaOperativa propuestaG;
+    private GestorCotizacion cotizacionG;
+    private GestorOrden ordenG;
 
     public SubsistemaGestionarOrden() {
-    }
-
-    public SubsistemaGestionarOrden(AlmacenTemporal almacen) {
-        this.clientesG = new GestorCliente(almacen);
-        this.solicitudG = solicitudG = new GestorSolicitud(almacen);
-        this.evaluacionG = evaluacionG = new GestorEvaluacion(almacen);
-        this.propuestaG = propuestaG = new GestorPropuestaOperativa(almacen);
-        this.cotizacionG = cotizacionG = new GestorCotizacion(almacen);
-        this.ordenG = ordenG = new GestorOrden(almacen);
-        this.almacen = almacen;
-    }
-    
-    @Override
-    public ClienteDTO buscarCliente(String correo) {
-        return clientesG.buscarPorCorreo(correo);
+        this.clienteG = new GestorCliente();
+        this.solicitudG = new GestorSolicitud();
+        this.evaluacionG = new GestorEvaluacion();
+        this.propuestaG = new GestorPropuestaOperativa();
+        this.cotizacionG = new GestorCotizacion();
+        this.ordenG = new GestorOrden();
     }
 
     @Override
-    public boolean validarEstadoCliente(String idCliente) {
-        return clientesG.validarEstado(idCliente);
+    public List<ClienteDTO> consultarClientes() {
+        return clienteG.consultarClientes();
     }
 
     @Override
-    public SolicitudTransporteDTO iniciarSolicitud(String idCliente) {
-        return solicitudG.crearSolicitud(idCliente);
+    public List<ClienteDTO> buscarClientes(String texto) {
+        return clienteG.buscarClientes(texto);
     }
 
     @Override
-    public SolicitudTransporteDTO registrarOrigenDestino(String folio, PuntoTrasladoDTO origen, PuntoTrasladoDTO destino) {
-        return solicitudG.asignarOrigenDestino(folio, origen, destino);
+    public ClienteDTO registrarCliente(ClienteDTO cliente) {
+        return clienteG.registrarCliente(cliente);
     }
 
     @Override
-    public SolicitudTransporteDTO agregarMercancia(String folio, MercanciaDTO mercancia) {
-        return solicitudG.agregarMercancia(folio, mercancia);
+    public boolean actualizarCliente(ClienteDTO cliente) {
+        return clienteG.actualizarCliente(cliente);
     }
 
     @Override
-    public SolicitudTransporteDTO enviarAEvaluacion(String folio) {
-        return solicitudG.marcarEnEvaluacion(folio);
+    public List<SolicitudTransporteDTO> consultarSolicitudesPorCliente(String idCliente) {
+        return solicitudG.consultarSolicitudesPorCliente(idCliente);
     }
 
     @Override
-    public EvaluacionTrasladoDTO evaluarSolicitud(String folio, EvaluacionTrasladoDTO evaluacion) {
-        return evaluacionG.evaluarViabilidad(folio, evaluacion);
+    public SolicitudTransporteDTO generarSolicitud(ClienteDTO cliente) {
+        return solicitudG.iniciarSolicitud(cliente);
     }
 
     @Override
-    public List<RutaDTO> crearRutas(String folio) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody        
+    public MercanciaDTO agregarMercancia(SolicitudTransporteDTO solicitud, MercanciaDTO mercancia) {
+        return solicitudG.agregarMercancia(solicitud, mercancia);
     }
 
     @Override
-    public PropuestaOperativaDTO seleccionarRuta(String folio, RutaDTO ruta) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public SolicitudTransporteDTO guardarSolicitud(SolicitudTransporteDTO solicitud) {
+        return solicitudG.guardarSolicitud(solicitud);
     }
 
     @Override
-    public List<TipoUnidadDTO> obtenerUnidadesDisponibles(double volumenRequerido, String condicionEspecial) {
-        return propuestaG.buscarUnidadesDisponibles(volumenRequerido, condicionEspecial);
+    public EvaluacionTrasladoDTO evaluarSolicitud(SolicitudTransporteDTO solicitud) {
+        return evaluacionG.evaluarSolicitud(solicitud);
     }
 
     @Override
-    public PropuestaOperativaDTO seleccionarUnidad(String folio, TipoUnidadDTO tipoUnidad) {
-        return propuestaG.seleccionarUnidad(folio, tipoUnidad);
+    public List<TipoUnidadDTO> consultarTiposUnidad() {
+        return propuestaG.consultarTiposUnidad();
     }
 
     @Override
-    public List<ServicioDTO> obtenerServicios(TipoUnidadDTO tipoUnidad, RutaDTO ruta) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public TipoUnidadDTO consultarTipoUnidadPorNombre(String nombre) {
+        return propuestaG.consultarTipoUnidadPorNombre(nombre);
     }
 
     @Override
-    public DetalleCotizacionDTO generarDetalleCotizacion(ServicioDTO servicio, String caracterServicio, boolean esIndispensable) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public PropuestaOperativaDTO generarPropuesta(String ruta, TipoUnidadDTO tipoUnidad, boolean requiereSeguroCarga) {
+        return propuestaG.generarPropuesta(ruta, tipoUnidad, requiereSeguroCarga);
     }
 
     @Override
-    public CotizacionDTO finalizarCotizacion(String folio, List<DetalleCotizacionDTO> detalles) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public CotizacionDTO generarCotizacion(SolicitudTransporteDTO solicitud, PropuestaOperativaDTO propuesta) {
+        return cotizacionG.generarCotizacion(solicitud, propuesta);
     }
 
     @Override
-    public DecisionClienteDTO registrarDecision(String folio, DecisionClienteDTO decision) {
-        return ordenG.registrarDecision(folio, decision);
+    public DecisionClienteDTO registrarDecision(String tipoDecision, String observaciones) {
+        return ordenG.registrarDecision(tipoDecision, observaciones);
     }
 
     @Override
-    public OrdenTransporteDTO generarOrden(String folio) {
-        return ordenG.generarOrdenTransporte(folio);
+    public OrdenTransporteDTO generarOrden(SolicitudTransporteDTO solicitud, PropuestaOperativaDTO propuesta, CotizacionDTO cotizacion) {
+        return ordenG.generarOrden(solicitud, propuesta, cotizacion);
     }
-    
 }

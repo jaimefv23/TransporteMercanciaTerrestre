@@ -3,32 +3,36 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 package implementaciones;
-
-import Almacen.AlmacenTemporal;
+import BOs.IClienteBO;
 import DTOS.ClienteDTO;
+import BOs.FabricaBO;
+import java.util.List;
 
 /**
  *
  * @author tolan
  */
 public class GestorCliente {
-    AlmacenTemporal almacen; //Mientras implementamos los BO
     
+    private IClienteBO clienteBO;
+
     public GestorCliente() {
-    }
-    
-    public GestorCliente(AlmacenTemporal almacen) {
-        this.almacen = almacen;
+        this.clienteBO = FabricaBO.crearClienteBO();
     }
 
-    public ClienteDTO buscarPorCorreo(String correo){
-        ClienteDTO cliente = almacen.buscarClientePorCorreo(correo);
-        if(validarEstado(cliente.getIdCliente())){
-            return cliente;
-        }
-        return null;
+    public List<ClienteDTO> consultarClientes() {
+        return clienteBO.consultarTodos();
     }
-    public boolean validarEstado(String idCliente){
-        return almacen.buscarClientePorId(idCliente).isEstado();
+
+    public List<ClienteDTO> buscarClientes(String texto) {
+        return clienteBO.buscar(texto);
+    }
+
+    public ClienteDTO registrarCliente(ClienteDTO cliente) {
+        return clienteBO.guardar(cliente);
+    }
+
+    public boolean actualizarCliente(ClienteDTO cliente) {
+        return clienteBO.actualizar(cliente);
     }
 }

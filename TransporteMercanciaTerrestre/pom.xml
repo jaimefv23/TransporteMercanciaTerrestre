@@ -11,6 +11,7 @@
         <module>../almacentemporal_TransporteMercanciaTerrestre</module>
         <module>InicioSesionSubsistema_TransporteMercanciaTerreste</module>
         <module>GestionarOrdenSubsistema_TransporteMercanciaTerrestre</module>
+        <module>Negocio_TransporteMercanciaTerrestre</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

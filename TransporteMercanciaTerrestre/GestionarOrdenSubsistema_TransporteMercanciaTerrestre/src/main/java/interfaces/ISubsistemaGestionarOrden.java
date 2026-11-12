@@ -25,21 +25,31 @@ import java.util.List;
  */
 public interface ISubsistemaGestionarOrden {
     
-    public ClienteDTO buscarCliente(String correo);
-    public boolean validarEstadoCliente(String idCliente);
-    public SolicitudTransporteDTO iniciarSolicitud(String idCliente);
-    public SolicitudTransporteDTO registrarOrigenDestino(String folio, PuntoTrasladoDTO origen, PuntoTrasladoDTO destino);
-    public SolicitudTransporteDTO agregarMercancia(String folio, MercanciaDTO mercancia);
-    public SolicitudTransporteDTO enviarAEvaluacion(String folio);
-    public EvaluacionTrasladoDTO evaluarSolicitud(String folio, EvaluacionTrasladoDTO evaluacion);
-    public List<RutaDTO> crearRutas(String folio);
-    public PropuestaOperativaDTO seleccionarRuta(String folio, RutaDTO ruta);
-    public List<TipoUnidadDTO> obtenerUnidadesDisponibles(double volumenRequerido, String condicionEspecial);
-    public PropuestaOperativaDTO seleccionarUnidad(String folio, TipoUnidadDTO tipoUnidad);
-    public List<ServicioDTO> obtenerServicios(TipoUnidadDTO tipoUnidad, RutaDTO ruta);
-    public DetalleCotizacionDTO generarDetalleCotizacion(ServicioDTO servicio, String caracterServicio, boolean esIndispensable);
-    public CotizacionDTO finalizarCotizacion(String folio, List<DetalleCotizacionDTO> detalles);
-    public DecisionClienteDTO registrarDecision(String folio, DecisionClienteDTO decision);
-    public OrdenTransporteDTO generarOrden(String folio);
+    // Clientes
+    public abstract List<ClienteDTO> consultarClientes();
+    public abstract List<ClienteDTO> buscarClientes(String texto);
+    public abstract ClienteDTO registrarCliente(ClienteDTO cliente);
+    public abstract boolean actualizarCliente(ClienteDTO cliente);
+
+    // Solicitud
+    public abstract List<SolicitudTransporteDTO> consultarSolicitudesPorCliente(String idCliente);
+    public abstract SolicitudTransporteDTO generarSolicitud(ClienteDTO cliente);
+    public abstract MercanciaDTO agregarMercancia(SolicitudTransporteDTO solicitud, MercanciaDTO mercancia);
+    public abstract SolicitudTransporteDTO guardarSolicitud(SolicitudTransporteDTO solicitud);
+
+    // Evaluación
+    public abstract EvaluacionTrasladoDTO evaluarSolicitud(SolicitudTransporteDTO solicitud);
+
+    // Propuesta operativa
+    public abstract List<TipoUnidadDTO> consultarTiposUnidad();
+    public abstract TipoUnidadDTO consultarTipoUnidadPorNombre(String nombre);
+    public abstract PropuestaOperativaDTO generarPropuesta(String ruta, TipoUnidadDTO tipoUnidad, boolean requiereSeguroCarga);
+
+    // Cotización
+    public abstract  CotizacionDTO generarCotizacion(SolicitudTransporteDTO solicitud, PropuestaOperativaDTO propuesta);
+
+    // Oeden
+    public abstract DecisionClienteDTO registrarDecision(String tipoDecision, String observaciones);
+    public abstract OrdenTransporteDTO generarOrden(SolicitudTransporteDTO solicitud, PropuestaOperativaDTO propuesta, CotizacionDTO cotizacion);
    
 }
